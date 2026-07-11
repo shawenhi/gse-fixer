@@ -18,15 +18,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        getByName("debug") {
-            storeFile = file("../keystore/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -35,12 +26,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -53,11 +42,7 @@ android {
         jvmTarget = "17"
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.13"
-    }
-
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/*"
         }
