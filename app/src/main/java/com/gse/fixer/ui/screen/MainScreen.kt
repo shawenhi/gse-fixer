@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
@@ -234,7 +233,7 @@ fun MainScreen() {
                                     imageVector = when (uiState) {
                                         UiState.Success -> Icons.Default.CheckCircle
                                         UiState.Partial -> Icons.Default.Warning
-                                        UiState.Failed -> Icons.Default.Error
+                                        UiState.Failed -> Icons.Default.Warning
                                     },
                                     contentDescription = null,
                                     tint = when (uiState) {

@@ -46,6 +46,7 @@ jobs:
 
       - name: Setup debug keystore
         run: |
+          mkdir -p keystore
           echo "${{ secrets.DEBUG_KEYSTORE }}" | base64 -d > keystore/debug.keystore
         env:
           DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
