@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val Module = module {
     single { SimpleLogger(androidContext()) }
-    single { GoogleServiceDetector(androidContext()) }
+    single { GoogleServiceDetector(androidContext(), get()) }
     single { BundledApks(androidContext(), get()) }
     single { GmsDownloader(androidContext(), get()) }
     single { ShizukuEnabler(androidContext(), get()) }

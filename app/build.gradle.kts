@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -27,10 +26,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -68,7 +69,6 @@ dependencies {
     implementation(libs.runtime.livedata)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
-    implementation(libs.koin.annotations)
     implementation(libs.shizuku.api)
     implementation(libs.okhttp)
     implementation(libs.okio)
@@ -76,6 +76,4 @@ dependencies {
     implementation(libs.coil.compose)
 
     debugImplementation(libs.ui.tooling)
-
-    ksp(libs.koin.ksp)
 }

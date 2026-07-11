@@ -12,11 +12,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.ConcurrentLinkedQueue
-import org.koin.core.annotation.Inject
-import org.koin.core.annotation.Single
 
-@Single
-class SimpleLogger @Inject constructor(
+class SimpleLogger(
     private val context: Context
 ) {
     private val mmkv = MMKV.defaultMMKV()
@@ -61,7 +58,7 @@ class SimpleLogger @Inject constructor(
 
     fun getMemoryLogs(): List<String> = memoryLog.toList()
 
-    suspend fun exportLogs(destFile: File): Boolean = withContext(Dispatchers.IO) {
+    suspend fun exportLogs(destFile: File): Boolean = kotlinx.coroutines.withContext(Dispatchers.IO) {
         try {
             destFile.parentFile?.mkdirs()
             FileWriter(destFile).use { writer ->

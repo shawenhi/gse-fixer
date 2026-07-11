@@ -6,11 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import org.koin.core.annotation.Inject
-import org.koin.core.annotation.Single
 
-@Single
-class BundledApks @Inject constructor(
+class BundledApks(
     private val context: Context,
     private val logger: SimpleLogger
 ) {

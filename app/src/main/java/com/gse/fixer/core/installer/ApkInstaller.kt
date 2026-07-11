@@ -13,11 +13,8 @@ import com.gse.fixer.model.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import org.koin.core.annotation.Inject
-import org.koin.core.annotation.Single
 
-@Single
-class ApkInstaller @Inject constructor(
+class ApkInstaller(
     private val context: Context,
     private val bundledApks: BundledApks,
     private val gmsDownloader: GmsDownloader,

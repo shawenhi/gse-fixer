@@ -9,12 +9,9 @@ import com.gse.fixer.model.Status
 import com.gse.fixer.model.TargetPackages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.koin.core.annotation.Inject
-import org.koin.core.annotation.Single
 import java.util.Locale
 
-@Single
-class GoogleServiceDetector @Inject constructor(
+class GoogleServiceDetector(
     private val context: Context,
     private val logger: SimpleLogger
 ) {

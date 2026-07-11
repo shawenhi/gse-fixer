@@ -10,11 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import moe.shizuku.manager.ShizukuManager
 import moe.shizuku.api.ShizukuApi
-import org.koin.core.annotation.Inject
-import org.koin.core.annotation.Single
 
-@Single
-class ShizukuEnabler @Inject constructor(
+class ShizukuEnabler(
     private val context: Context,
     private val logger: SimpleLogger
 ) {

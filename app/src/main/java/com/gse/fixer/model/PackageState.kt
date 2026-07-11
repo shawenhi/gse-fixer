@@ -32,13 +32,13 @@ enum class Status(
     val label: String,
     val color: Int
 ) {
-    OK("正常", 0xFF4CAF50),
-    DISABLED("被禁用", 0xFFF44336),
-    FROZEN("被冻结", 0xFFF44336),
-    HIDDEN("隐藏图标", 0xFFFF9800),
-    STUB("版本过旧", 0xFFFF9800),
-    MISSING("未安装", 0xFF9E9E9E),
-    UNKNOWN("未知", 0xFF607D8B)
+    OK("正常", 0x4CAF50.toInt()),
+    DISABLED("被禁用", 0xF44336.toInt()),
+    FROZEN("被冻结", 0xF44336.toInt()),
+    HIDDEN("隐藏图标", 0xFF9800.toInt()),
+    STUB("版本过旧", 0xFF9800.toInt()),
+    MISSING("未安装", 0x9E9E9E.toInt()),
+    UNKNOWN("未知", 0x607D8B.toInt())
 }
 
 object TargetPackages {

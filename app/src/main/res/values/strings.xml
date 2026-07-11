@@ -19,6 +19,8 @@
     <string name="action_enable">启用</string>
     <string name="action_install">安装</string>
     <string name="action_update">更新</string>
+    <string name="action_fix">修复</string>
+    <string name="action_detect">检测</string>
     <string name="label_gsf">Google 服务框架 (GSF)</string>
     <string name="label_gms">Google Play 服务 (GMS)</string>
     <string name="label_play_store">Google Play 商店</string>

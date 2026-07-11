@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Web
@@ -39,32 +40,24 @@ fun StatusCard(
     state: PackageState,
     onActionClick: () -> Unit
 ) {
-    val (statusColor, statusIcon, actionText, actionIcon) = when (state.status) {
-        Status.OK -> {
-            androidx.compose.material3.MaterialTheme.colorScheme.primary to Icons.Default.CheckCircle
-            stringResource(com.gse.fixer.R.string.status_ok) to Icons.Default.CheckCircle
-        }
-        Status.DISABLED, Status.FROZEN -> {
-            androidx.compose.material3.MaterialTheme.colorScheme.error to Icons.Default.Warning
-            stringResource(com.gse.fixer.R.string.action_enable) to Icons.Default.PlayArrow
-        }
-        Status.HIDDEN -> {
-            androidx.compose.material3.MaterialTheme.colorScheme.tertiary to Icons.Default.Info
-            stringResource(com.gse.fixer.R.string.action_enable) to Icons.Default.PlayArrow
-        }
-        Status.STUB -> {
-            androidx.compose.material3.MaterialTheme.colorScheme.tertiary to Icons.Default.CloudSync
-            stringResource(com.gse.fixer.R.string.action_update) to Icons.Default.ArrowDownward
-        }
-        Status.MISSING -> {
-            androidx.compose.material3.MaterialTheme.colorScheme.error to Icons.Default.ShoppingBag
-            stringResource(com.gse.fixer.R.string.action_install) to Icons.Default.ArrowDownward
-        }
-        else -> {
-            androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant to Icons.Default.Info
-            stringResource(com.gse.fixer.R.string.status_unknown) to Icons.Default.Info
-        }
+    val statusInfo = when (state.status) {
+        Status.OK -> androidx.compose.material3.MaterialTheme.colorScheme.primary to Icons.Default.CheckCircle
+        Status.DISABLED, Status.FROZEN -> androidx.compose.material3.MaterialTheme.colorScheme.error to Icons.Default.Warning
+        Status.HIDDEN, Status.STUB -> androidx.compose.material3.MaterialTheme.colorScheme.tertiary to Icons.Default.Info
+        Status.MISSING -> androidx.compose.material3.MaterialTheme.colorScheme.outline to Icons.Default.CloudSync
+        Status.UNKNOWN -> androidx.compose.material3.MaterialTheme.colorScheme.outline to Icons.Default.Warning
     }
+    val actionInfo = when (state.status) {
+        Status.OK -> stringResource(com.gse.fixer.R.string.status_ok) to Icons.Default.CheckCircle
+        Status.DISABLED, Status.FROZEN -> stringResource(com.gse.fixer.R.string.action_enable) to Icons.Default.PlayArrow
+        Status.HIDDEN, Status.STUB -> stringResource(com.gse.fixer.R.string.action_fix) to Icons.Default.PlayArrow
+        Status.MISSING -> stringResource(com.gse.fixer.R.string.action_install) to Icons.Default.ArrowDownward
+        Status.UNKNOWN -> stringResource(com.gse.fixer.R.string.action_detect) to Icons.Default.Refresh
+    }
+    val statusColor = statusInfo.first
+    val statusIcon = statusInfo.second
+    val actionText = actionInfo.first
+    val actionIcon = actionInfo.second
 
     Card(
         modifier = Modifier.fillMaxWidth(),
