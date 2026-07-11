@@ -1,6 +1,5 @@
 package com.gse.fixer.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,175 +8,150 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CloudSync
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Web
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gse.fixer.model.PackageState
 import com.gse.fixer.model.Status
-import com.gse.fixer.R
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CloudSync
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingBag
-import androidx.compose.material.icons.filled.Web
-import androidx.compose.material.icons.filled.Android
 
 @Composable
 fun StatusCard(
     state: PackageState,
-    onActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onActionClick: () -> Unit
 ) {
-    val statusColor = Color(state.displayStatusColor)
-    val isProblematic = state.isProblematic
+    val (statusColor, statusIcon, actionText, actionIcon) = when (state.status) {
+        Status.OK -> {
+            androidx.compose.material3.MaterialTheme.colorScheme.primary to Icons.Default.CheckCircle
+            stringResource(com.gse.fixer.R.string.status_ok) to Icons.Default.CheckCircle
+        }
+        Status.DISABLED, Status.FROZEN -> {
+            androidx.compose.material3.MaterialTheme.colorScheme.error to Icons.Default.Warning
+            stringResource(com.gse.fixer.R.string.action_enable) to Icons.Default.PlayArrow
+        }
+        Status.HIDDEN -> {
+            androidx.compose.material3.MaterialTheme.colorScheme.tertiary to Icons.Default.Info
+            stringResource(com.gse.fixer.R.string.action_enable) to Icons.Default.PlayArrow
+        }
+        Status.STUB -> {
+            androidx.compose.material3.MaterialTheme.colorScheme.tertiary to Icons.Default.CloudSync
+            stringResource(com.gse.fixer.R.string.action_update) to Icons.Default.ArrowDownward
+        }
+        Status.MISSING -> {
+            androidx.compose.material3.MaterialTheme.colorScheme.error to Icons.Default.ShoppingBag
+            stringResource(com.gse.fixer.R.string.action_install) to Icons.Default.ArrowDownward
+        }
+        else -> {
+            androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant to Icons.Default.Info
+            stringResource(com.gse.fixer.R.string.status_unknown) to Icons.Default.Info
+        }
+    }
 
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (isProblematic) statusColor.copy(alpha = 0.1f) else statusColor.copy(alpha = 0.05f),
-            contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerLow
         ),
-        shape = RoundedCornerShape(16.dp),
-        border = if (isProblematic) Outline.Border(2.dp, statusColor) else null
+        shape = RoundedCornerShape(12.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Header: Icon + Label + Status
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier.size(40.dp)
-                            .background(statusColor.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
-                            .padding(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = getIconForPackage(state.packageName),
-                            contentDescription = null,
-                            tint = statusColor,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(start = 12.dp))
+                    Icon(
+                        imageVector = when (state.packageName) {
+                            "com.google.android.gsf" -> Icons.Default.CloudSync
+                            "com.google.android.gms" -> Icons.Default.PlayArrow
+                            "com.android.vending" -> Icons.Default.ShoppingBag
+                            "com.android.chrome" -> Icons.Default.Web
+                            else -> Icons.Default.Info
+                        },
+                        contentDescription = null,
+                        tint = statusColor,
+                        modifier = Modifier.size(24.dp).padding(end = 12.dp)
+                    )
                     Column {
+                        Text(text = state.label, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         Text(
-                            text = state.label,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = state.displayStatus,
+                            text = if (state.isInstalled) "${state.versionName} (${state.versionCode})" else state.displayVersion,
                             fontSize = 12.sp,
-                            color = statusColor,
-                            fontWeight = FontWeight.Medium
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
 
-                // Version badge
-                if (state.isInstalled) {
-                    Text(
-                        text = "v${state.versionName}",
-                        fontSize = 12.sp,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(imageVector = statusIcon, contentDescription = null, tint = statusColor, modifier = Modifier.size(16.dp))
+                        Text(text = state.displayStatus, fontWeight = FontWeight.Medium, fontSize = 12.sp, color = statusColor)
+                    }
+                    if (state.isSystemApp) {
+                        Text(text = stringResource(com.gse.fixer.R.string.detail_system), fontSize = 10.sp, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
 
+            // Details
             androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
-
-            // Detail row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (state.isInstalled) {
-                    Text(
-                        text = stringResource(R.string.detail_installer, state.installer),
-                        fontSize = 11.sp,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = if (state.isSystemApp) stringResource(R.string.detail_system) else "",
-                        fontSize = 11.sp,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary
-                    )
-                } else {
-                    Text(
-                        text = "需安装",
-                        fontSize = 12.sp,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Medium
-                    )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(text = stringResource(com.gse.fixer.R.string.detail_installer, state.installer), fontSize = 12.sp, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (state.minVersionCode > 0 && state.isInstalled) {
+                        Text(text = "最低: ${state.minVersionCode}", fontSize = 12.sp, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
 
             // Action button
-            if (state.isProblematic) {
+            if (state.isProblematic && state.isRequired) {
                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 12.dp))
-                androidx.compose.material3.Button(
+                Button(
                     onClick = onActionClick,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = statusColor,
-                        contentColor = Color.White
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = statusColor)
                 ) {
-                    Text(
-                        text = if (state.needsInstall) stringResource(R.string.action_install)
-                        else stringResource(R.string.action_enable),
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp
-                    )
-                }
-            } else {
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = statusColor
-                    )
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(start = 4.dp))
-                    Text(
-                        text = stringResource(R.string.status_ok),
-                        color = statusColor,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(imageVector = actionIcon, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(18.dp).padding(end = 8.dp))
+                        Text(text = actionText, fontWeight = FontWeight.Bold, color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary)
+                    }
                 }
             }
         }
     }
-}
-
-@Composable
-private fun getIconForPackage(packageName: String) = when (packageName) {
-    "com.google.android.gsf" -> Icons.Default.Settings
-    "com.google.android.gms" -> Icons.Default.CloudSync
-    "com.android.vending" -> Icons.Default.ShoppingBag
-    "com.android.chrome" -> Icons.Default.Web
-    else -> Icons.Default.Android
 }

@@ -42,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gse.fixer.core.detector.GoogleServiceDetector
-import com.gse.fixer.core.downloader.GmsDownloader
 import com.gse.fixer.core.enabler.ShizukuEnabler
 import com.gse.fixer.core.installer.ApkInstaller
 import com.gse.fixer.core.log.SimpleLogger
@@ -60,11 +59,11 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MainScreen() {
-    val logger = remember { get<SimpleLogger>(parametersOf(Module)) }
-    val detector = remember { get<GoogleServiceDetector>(parametersOf(Module)) }
-    val enabler = remember { get<ShizukuEnabler>(parametersOf(Module)) }
-    val installer = remember { get<ApkInstaller>(parametersOf(Module)) }
-    val verifier = remember { get<ServiceVerifier>(parametersOf(Module)) }
+    val logger = remember { get<SimpleLogger>() }
+    val detector = remember { get<GoogleServiceDetector>() }
+    val enabler = remember { get<ShizukuEnabler>() }
+    val installer = remember { get<ApkInstaller>() }
+    val verifier = remember { get<ServiceVerifier>() }
 
     var states by remember { mutableStateOf<List<PackageState>>(emptyList()) }
     var uiState by remember { mutableStateOf<UiState>(UiState.Loading) }
@@ -74,7 +73,7 @@ fun MainScreen() {
     var fixProgress by remember { mutableStateOf<FixProgress?>(null) }
 
     // 检查 Shizuku 状态
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         shizukuAuthorized = enabler.isShizukuAvailable()
         if (!shizukuAuthorized) {
             logger.i("MainScreen", "Shizuku 不可用，需引导用户授权")
@@ -86,7 +85,6 @@ fun MainScreen() {
         uiState = UiState.Loading
         CoroutineScope(Dispatchers.IO).launch {
             val result = detector.detectAll()
-            androidx.compose.runtime.Snapshot.sendApplyNotifications()
             states = result
             shizukuAuthorized = enabler.isShizukuAvailable()
             uiState = UiState.Ready
@@ -110,10 +108,10 @@ fun MainScreen() {
 
                 var success = false
                 if (state.needsEnable) {
-                    fixProgress = fixProgress.copy(currentLabel = stringResource(R.string.fixing_step_enable, label))
+                    fixProgress = fixProgress.copy(currentLabel = "启用 $label")
                     success = enabler.enablePackage(state)
                 } else if (state.needsInstall) {
-                    fixProgress = fixProgress.copy(currentLabel = stringResource(R.string.fixing_step_install, label))
+                    fixProgress = fixProgress.copy(currentLabel = "安装 $label")
                     success = installer.installIfNeeded(state) { progress ->
                         // TODO: 更新下载进度
                     }
@@ -125,7 +123,7 @@ fun MainScreen() {
             }
 
             // 验证
-            fixProgress = fixProgress.copy(currentLabel = stringResource(R.string.fixing_step_verify, "全部"))
+            fixProgress = fixProgress.copy(currentLabel = "验证全部")
             val verifyResults = verifier.verifyAll(states)
             val allVerified = verifyResults.all { it.allPassed }
 

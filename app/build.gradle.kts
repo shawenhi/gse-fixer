@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp") version "2.0.20-1.0.14"
 }
 
 android {
@@ -67,6 +68,7 @@ dependencies {
     implementation(libs.runtime.livedata)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.annotations)
     implementation(libs.shizuku.api)
     implementation(libs.okhttp)
     implementation(libs.okio)
@@ -74,4 +76,6 @@ dependencies {
     implementation(libs.coil.compose)
 
     debugImplementation(libs.ui.tooling)
+
+    ksp(libs.koin.ksp)
 }

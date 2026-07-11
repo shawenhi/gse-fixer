@@ -6,13 +6,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okio.Okio
 import okio.buffer
 import okio.sink
 import java.io.File
 import java.util.concurrent.TimeUnit
 import org.koin.core.annotation.Inject
+import org.koin.core.annotation.Single
 
+@Single
 class GmsDownloader @Inject constructor(
     private val context: Context,
     private val logger: SimpleLogger
