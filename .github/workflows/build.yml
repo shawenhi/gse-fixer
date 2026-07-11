@@ -24,13 +24,6 @@ jobs:
           accept-android-sdk-licenses: true
           packages: 'tools platform-tools platforms;android-34 build-tools;34.0.0 ndk;26.1.10909125'
 
-      -  name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          api-level: 34
-          build-tools-version: 34.0.0
-          ndk-version: r26c
-
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
