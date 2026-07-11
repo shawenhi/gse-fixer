@@ -17,12 +17,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+
       - name: Set up Android SDK
-        run: |
-          # 1. 强行自动接受所有组件的协议（防止任何隐藏弹窗）
-          yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          # 2. 导出 NDK 环境变量给 Gradle 编译使用（Ubuntu 镜像自带 ndk-bundle）
-          echo "ANDROID_NDK_HOME=${ANDROID_HOME}/ndk-bundle" >> $GITHUB_ENV
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 12266719
+          accept-android-sdk-licenses: true
+          packages: 'tools platform-tools platforms;android-34 build-tools;34.0.0 ndk;26.1.10909125'
 
       - name: Cache Gradle packages
         uses: actions/cache@v4
@@ -63,3 +70,4 @@ jobs:
           name: gse-fixer-release-apk
           path: app/build/outputs/apk/release/app-release.apk
           retention-days: 30
+
