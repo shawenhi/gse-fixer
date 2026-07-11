@@ -13,10 +13,10 @@ import com.gse.fixer.model.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Inject
+import org.koin.core.annotation.Single
 
-@Singleton
+@Single
 class ApkInstaller @Inject constructor(
     private val context: Context,
     private val bundledApks: BundledApks,

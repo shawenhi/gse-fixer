@@ -5,15 +5,15 @@ import android.content.pm.PackageManager
 import com.gse.fixer.core.log.SimpleLogger
 import com.gse.fixer.model.PackageState
 import com.gse.fixer.model.Status
-import com.rikka.shizuku.Shizuku
-import com.rikka.shizuku.SystemServiceHelper
+import moe.shizuku.privileged.api.Shizuku
+import moe.shizuku.privileged.api.SystemServiceHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.reflect.Method
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Inject
+import org.koin.core.annotation.Single
 
-@Singleton
+@Single
 class ShizukuEnabler @Inject constructor(
     private val context: Context,
     private val logger: SimpleLogger
@@ -108,5 +108,22 @@ class ShizukuEnabler @Inject constructor(
                 } catch (_: Exception) { /* 忽略单个权限失败 */ }
             }
         } catch (_: Exception) { /* 忽略 */ }
+    }
+
+    fun installApk(apkFile: java.io.File): Boolean {
+        if (!isShizukuAvailable()) return false
+        return try {
+            pm.installPackage(
+                apkFile.absolutePath,
+                0, // flags
+                null, // observer
+                0 // userId
+            )
+            logger.i("ShizukuEnabler", "静默安装成功: ${apkFile.name}")
+            true
+        } catch (e: Exception) {
+            logger.w("ShizukuEnabler", "静默安装失败", e)
+            false
+        }
     }
 }

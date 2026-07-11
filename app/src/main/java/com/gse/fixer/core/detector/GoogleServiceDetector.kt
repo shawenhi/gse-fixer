@@ -9,10 +9,11 @@ import com.gse.fixer.model.Status
 import com.gse.fixer.model.TargetPackages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Inject
+import org.koin.core.annotation.Single
+import java.util.Locale
 
-@Singleton
+@Single
 class GoogleServiceDetector @Inject constructor(
     private val context: Context,
     private val logger: SimpleLogger
@@ -51,7 +52,10 @@ class GoogleServiceDetector @Inject constructor(
                 logger.w("Detector", "${meta.label} 疑似系统占位符: versionCode=$versionCode < ${meta.minVersion}")
             }
             // 2. 启用状态检查
-            else if (!pm.isPackageEnabled(meta.packageName, 0)) {
+            else if (!pm.getApplicationEnabledSetting(meta.packageName).let { 
+                it == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT || 
+                it == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            }) {
                 val enabledSetting = pm.getApplicationEnabledSetting(meta.packageName)
                 when (enabledSetting) {
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER,
@@ -60,10 +64,12 @@ class GoogleServiceDetector @Inject constructor(
                         isDisabled = true
                         logger.w("Detector", "${meta.label} 被禁用: enabledSetting=$enabledSetting")
                     }
-                    PackageManager.COMPONENT_ENABLED_STATE_HIDDEN -> {
-                        status = Status.HIDDEN
-                        isHidden = true
-                        logger.w("Detector", "${meta.label} 被隐藏")
+                    else -> {
+                        if (enabledSetting == 4) { // COMPONENT_ENABLED_STATE_HIDDEN (API 24+)
+                            status = Status.HIDDEN
+                            isHidden = true
+                            logger.w("Detector", "${meta.label} 被隐藏")
+                        }
                     }
                 }
             }

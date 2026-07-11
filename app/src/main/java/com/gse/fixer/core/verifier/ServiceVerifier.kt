@@ -7,10 +7,10 @@ import com.gse.fixer.model.PackageState
 import com.gse.fixer.model.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Inject
+import org.koin.core.annotation.Single
 
-@Singleton
+@Single
 class ServiceVerifier @Inject constructor(
     private val context: Context,
     private val logger: SimpleLogger

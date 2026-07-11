@@ -6,14 +6,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okio.buffer
-import okio.sink
+import okio.BufferedSink
+import okio.BufferedSource
+import okio.Okio
 import java.io.File
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Inject
+import org.koin.core.annotation.Single
 
-@Singleton
+@Single
 class GmsDownloader @Inject constructor(
     private val context: Context,
     private val logger: SimpleLogger
@@ -45,17 +46,17 @@ class GmsDownloader @Inject constructor(
                 val totalBytes = body?.contentLength() ?: -1L
                 var downloaded = 0L
                 
-                body?.byteStream()?.buffer()?.use { bufferedSource ->
-                    destFile.outputStream().buffer().use { bufferedSink ->
+                body?.source()?.use { source: BufferedSource ->
+                    destFile.outputStream().buffer().use { sink: BufferedSink ->
                         while (true) {
-                            val read = bufferedSource.read(bufferedSink.buffer, 8192)
+                            val read = source.read(sink.buffer, 8192)
                             if (read == -1L) break
                             downloaded += read
                             if (totalBytes > 0) {
                                 onProgress(downloaded.toFloat() / totalBytes)
                             }
                         }
-                        bufferedSink.flush()
+                        sink.flush()
                     }
                 }
                 

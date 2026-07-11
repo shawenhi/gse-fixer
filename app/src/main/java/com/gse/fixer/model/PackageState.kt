@@ -51,7 +51,7 @@ object TargetPackages {
         PackageMeta(GSF, "Google 服务框架 (GSF)", "GoogleServicesFramework.apk", 
             minVersion = 200000000L, downloadUrl = null),
         PackageMeta(GMS, "Google Play 服务 (GMS)", "base.apk", 
-            minVersion = 210000000L, downloadUrl = "https://github.com/your-repo/gms-releases/releases/download/latest/base.apk"),
+            minVersion = 210000000L, downloadUrl = "https://github.com/madebychinese/gms-installer/releases/latest/download/base.apk"),
         PackageMeta(PLAY_STORE, "Google Play 商店", "Phonesky.apk",
             minVersion = 30000000L, downloadUrl = null),
         PackageMeta(CHROME, "Chrome 浏览器", "Chrome.apk",
