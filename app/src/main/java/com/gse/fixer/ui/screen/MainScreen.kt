@@ -353,12 +353,12 @@ fun MainScreen() {
 }
 
 sealed interface UiState {
-    object Loading : UiState
-    object Ready : UiState
-    object Fixing : UiState
-    object Success : UiState
-    object Partial : UiState
-    object Failed : UiState
+    data object Loading : UiState
+    data object Ready : UiState
+    data object Fixing : UiState
+    data object Success : UiState
+    data object Partial : UiState
+    data object Failed : UiState
 }
 
 data class FixProgress(
