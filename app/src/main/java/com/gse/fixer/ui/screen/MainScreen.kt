@@ -57,24 +57,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import org.koin.androidx.compose.get
-import org.koin.core.parameter.parameterOf
-import org.koin.core.qualifier.named
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MainScreen() {
-    val logger = remember { get<SimpleLogger>(parameterOf(Module))
-    val detector = remember { get<GoogleServiceDetector>(parameterOf(Module))
-    val enabler = remember { get<ShizukuEnabler>(parameterOf(Module))
-    val installer = remember { get<ApkInstaller>(parameterOf(Module))
-    val verifier = remember { get<ServiceVerifier>(parameterOf(Module))
-    
+    val logger = remember { get<SimpleLogger>(parametersOf(Module)) }
+    val detector = remember { get<GoogleServiceDetector>(parametersOf(Module)) }
+    val enabler = remember { get<ShizukuEnabler>(parametersOf(Module)) }
+    val installer = remember { get<ApkInstaller>(parametersOf(Module)) }
+    val verifier = remember { get<ServiceVerifier>(parametersOf(Module)) }
+
     var states by remember { mutableStateOf<List<PackageState>>(emptyList()) }
     var uiState by remember { mutableStateOf<UiState>(UiState.Loading) }
     var shizukuAuthorized by remember { mutableStateOf(false) }
     var showLogs by remember { mutableStateOf(false) }
     var logs by remember { mutableStateOf<List<String>>(emptyList()) }
     var fixProgress by remember { mutableStateOf<FixProgress?>(null) }
-    
+
     // 检查 Shizuku 状态
     androidx.compose.runtime.LaunchedEffect(Unit) {
         shizukuAuthorized = enabler.isShizukuAvailable()
@@ -83,7 +82,7 @@ fun MainScreen() {
         }
         detect()
     }
-    
+
     fun detect() {
         uiState = UiState.Loading
         CoroutineScope(Dispatchers.IO).launch {
@@ -94,22 +93,22 @@ fun MainScreen() {
             uiState = UiState.Ready
         }
     }
-    
+
     fun startFix() {
         val problematicStates = states.filter { it.isProblematic && it.isRequired }
         if (problematicStates.isEmpty()) return
-        
+
         fixProgress = FixProgress(total = problematicStates.size, current = 0, currentLabel = "")
         uiState = UiState.Fixing
-        
+
         CoroutineScope(Dispatchers.IO).launch {
             var allSuccess = true
             var completed = 0
-            
+
             for (state in problematicStates) {
                 val label = state.label
                 fixProgress = fixProgress.copy(current = completed, currentLabel = label)
-                
+
                 var success = false
                 if (state.needsEnable) {
                     fixProgress = fixProgress.copy(currentLabel = stringResource(R.string.fixing_step_enable, label))
@@ -120,24 +119,24 @@ fun MainScreen() {
                         // TODO: 更新下载进度
                     }
                 }
-                
+
                 if (!success) allSuccess = false
                 completed++
                 fixProgress = fixProgress.copy(current = completed)
             }
-            
+
             // 验证
             fixProgress = fixProgress.copy(currentLabel = stringResource(R.string.fixing_step_verify, "全部"))
             val verifyResults = verifier.verifyAll(states)
             val allVerified = verifyResults.all { it.allPassed }
-            
-            uiState = if (allSuccess && allVerified) UiState.Success 
-            else if (allSuccess) UiState.Partial 
+
+            uiState = if (allSuccess && allVerified) UiState.Success
+            else if (allSuccess) UiState.Partial
             else UiState.Failed
             fixProgress = null
         }
     }
-    
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -155,14 +154,14 @@ fun MainScreen() {
                 }
                 Row {
                     IconButton(onClick = { showLogs = !showLogs }) {
-                        Icon(imageVector = androidx.compose.material.icons.Icons.Default.ListAlt, contentDescription = "日志")
+                        Icon(imageVector = Icons.Default.ListAlt, contentDescription = "日志")
                     }
                     IconButton(onClick = { detect() }) {
-                        Icon(imageVector = androidx.compose.material.icons.Icons.Default.Refresh, contentDescription = "刷新")
+                        Icon(imageVector = Icons.Default.Refresh, contentDescription = "刷新")
                     }
                 }
             }
-            
+
             // Shizuku Status Banner
             if (!shizukuAuthorized) {
                 Card(
@@ -175,7 +174,7 @@ fun MainScreen() {
                     ) {
                         Column {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(imageVector = androidx.compose.material.icons.Icons.Default.Warning, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.error)
+                                Icon(imageVector = Icons.Default.Warning, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.error)
                                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(start = 8.dp))
                                 Text(text = stringResource(R.string.shizuku_not_installed), fontWeight = FontWeight.Medium, color = androidx.compose.material3.MaterialTheme.colorScheme.error)
                             }
@@ -191,7 +190,7 @@ fun MainScreen() {
                     }
                 }
             }
-            
+
             // Progress / Fixing UI
             when (uiState) {
                 UiState.Loading -> {
@@ -203,7 +202,7 @@ fun MainScreen() {
                         }
                     }
                 }
-                
+
                 UiState.Fixing -> {
                     fixProgress?.let { progress ->
                         Card(modifier = Modifier.fillMaxWidth()) {
@@ -220,22 +219,22 @@ fun MainScreen() {
                         }
                     }
                 }
-                
+
                 UiState.Success, UiState.Partial, UiState.Failed -> {
                     val (title, subtitle) = when (uiState) {
                         UiState.Success -> stringResource(R.string.fix_complete) to stringResource(R.string.fix_complete_subtitle)
                         UiState.Partial -> stringResource(R.string.fix_partial) to "部分项目修复成功，请检查日志"
                         UiState.Failed -> stringResource(R.string.fix_failed) to "修复失败，请查看日志或手动处理"
                     }
-                    
+
                     Card(modifier = Modifier.fillMaxWidth()) {
                         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(24.dp)) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     imageVector = when (uiState) {
-                                        UiState.Success -> androidx.compose.material.icons.Icons.Default.CheckCircle
-                                        UiState.Partial -> androidx.compose.material.icons.Icons.Default.Warning
-                                        UiState.Failed -> androidx.compose.material.icons.Icons.Default.Error
+                                        UiState.Success -> Icons.Default.CheckCircle
+                                        UiState.Partial -> Icons.Default.Warning
+                                        UiState.Failed -> Icons.Default.Error
                                     },
                                     contentDescription = null,
                                     tint = when (uiState) {
@@ -247,7 +246,7 @@ fun MainScreen() {
                                 )
                                 Text(text = title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                                 Text(text = subtitle, fontSize = 14.sp, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
-                                
+
                                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 16.dp))
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -271,7 +270,7 @@ fun MainScreen() {
                         }
                     }
                 }
-                
+
                 UiState.Ready -> {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         items(states) { state ->
@@ -288,7 +287,7 @@ fun MainScreen() {
                             )
                         }
                     }
-                    
+
                     // 一键修复按钮
                     val hasProblematic = states.any { it.isProblematic && it.isRequired }
                     if (hasProblematic) {
@@ -306,7 +305,7 @@ fun MainScreen() {
                 }
             }
         }
-        
+
         // Logs overlay
         if (showLogs) {
             Box(
@@ -329,7 +328,7 @@ fun MainScreen() {
                         ) {
                             Text(text = stringResource(R.string.log_title), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             IconButton(onClick = { showLogs = false }) {
-                                Icon(imageVector = androidx.compose.material.icons.Icons.Default.Close, contentDescription = "关闭")
+                                Icon(imageVector = Icons.Default.Close, contentDescription = "关闭")
                             }
                         }
                         androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -339,7 +338,7 @@ fun MainScreen() {
                                 verticalArrangement = Arrangement.Bottom
                             ) {
                                 logs.reversed().forEach { line ->
-                                    Text(text = line, fontSize = 10.sp, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace, color = Color.White)
+                                    Text(text = line, fontSize = 10.sp, fontFamily = FontFamily.Monospace, color = Color.White)
                                 }
                             }
                         }

@@ -44,7 +44,7 @@ fun StatusCard(
 ) {
     val statusColor = Color(state.displayStatusColor)
     val isProblematic = state.isProblematic
-    
+
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -92,7 +92,7 @@ fun StatusCard(
                         )
                     }
                 }
-                
+
                 // Version badge
                 if (state.isInstalled) {
                     Text(
@@ -102,9 +102,9 @@ fun StatusCard(
                     )
                 }
             }
-            
+
             androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
-            
+
             // Detail row
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -130,7 +130,7 @@ fun StatusCard(
                     )
                 }
             }
-            
+
             // Action button
             if (state.isProblematic) {
                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 12.dp))
@@ -156,7 +156,7 @@ fun StatusCard(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.CheckCircle,
+                        imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
                         tint = statusColor
                     )
