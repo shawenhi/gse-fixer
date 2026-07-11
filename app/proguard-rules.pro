@@ -1,0 +1,9 @@
+-keep class com.rikka.shizuku.** { *; }
+-keep class com.tencent.mmkv.** { *; }
+-keep class io.coil-kt.** { *; }
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
+-keep class com.gse.fixer.** { *; }
+-dontwarn com.rikka.shizuku.**
+-dontwarn com.tencent.mmkv.**
+-dontwarn io.coil-kt.**

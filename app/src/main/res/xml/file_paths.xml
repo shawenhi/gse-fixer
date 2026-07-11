@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <cache-path name="gms_apks" path="gms/" />
+    <external-cache-path name="gms_apks_ext" path="gms/" />
+</paths>

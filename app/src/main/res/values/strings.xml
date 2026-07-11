@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">谷歌服务一键安装器</string>
+    <string name="app_name_short">GSE Fixer</string>
+    
+    <!-- Main Screen -->
+    <string name="scan_title">正在检测设备环境…</string>
+    <string name="scan_subtitle">检测 Google 服务状态</string>
+    <string name="btn_start_fix">一键修复</string>
+    <string name="btn_install_shizuku">先安装 Shizuku</string>
+    <string name="btn_open_shizuku">打开 Shizuku 授权</string>
+    <string name="btn_retry">重新检测</string>
+    <string name="status_ok">正常</string>
+    <string name="status_disabled">已禁用</string>
+    <string name="status_frozen">已冻结</string>
+    <string name="status_hidden">已隐藏</string>
+    <string name="status_stub">版本过旧</string>
+    <string name="status_missing">未安装</string>
+    <string name="status_unknown">未知</string>
+    <string name="action_enable">启用</string>
+    <string name="action_install">安装</string>
+    <string name="action_update">更新</string>
+    <string name="label_gsf">Google 服务框架 (GSF)</string>
+    <string name="label_gms">Google Play 服务 (GMS)</string>
+    <string name="label_play_store">Google Play 商店</string>
+    <string name="label_chrome">Chrome 浏览器</string>
+    <string name="detail_version">版本: %s</string>
+    <string name="detail_installer">安装来源: %s</string>
+    <string name="detail_system">系统应用</string>
+    <string name="fixing_title">正在修复…</string>
+    <string name="fixing_step_enable">启用 %s</string>
+    <string name="fixing_step_install">安装 %s</string>
+    <string name="fixing_step_download">下载 %s</string>
+    <string name="fixing_step_verify">验证 %s</string>
+    <string name="fix_complete">修复完成！</string>
+    <string name="fix_complete_subtitle">所有 Google 服务已就绪</string>
+    <string name="fix_partial">部分完成</string>
+    <string name="fix_failed">修复失败</string>
+    <string name="btn_open_play_store">打开 Play 商店</string>
+    <string name="btn_open_chrome">打开 Chrome</string>
+    <string name="btn_view_logs">查看日志</string>
+    <string name="btn_export_logs">导出日志</string>
+    <string name="log_title">详细日志</string>
+    <string name="shizuku_not_installed">未检测到 Shizuku</string>
+    <string name="shizuku_not_installed_desc">需要 Shizuku 权限才能静默安装/启用系统应用\n请先安装 Shizuku 并授权</string>
+    <string name="shizuku_not_authorized">Shizuku 未授权</string>
+    <string name="shizuku_not_authorized_desc">请在 Shizuku 应用中授权本应用</string>
+    <string name="shizuku_ready">Shizuku 就绪</string>
+    <string name="downloading_gms">正在下载 GMS (约 200MB)，请保持网络连接…</string>
+    <string name="download_failed">下载失败，请重试</string>
+    <string name="install_via_system">将打开系统安装界面，请点击「安装」</string>
+    <string name="verify_passed">验证通过</string>
+    <string name="verify_failed">验证失败</string>
+</resources>
