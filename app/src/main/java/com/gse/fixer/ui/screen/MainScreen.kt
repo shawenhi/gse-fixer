@@ -220,26 +220,30 @@ fun MainScreen() {
                 }
 
                 UiState.Success, UiState.Partial, UiState.Failed -> {
-                    val (title, subtitle) = when (uiState) {
+                    val currentState = uiState
+                    val (title, subtitle) = when (currentState) {
                         UiState.Success -> stringResource(R.string.fix_complete) to stringResource(R.string.fix_complete_subtitle)
                         UiState.Partial -> stringResource(R.string.fix_partial) to "部分项目修复成功，请检查日志"
                         UiState.Failed -> stringResource(R.string.fix_failed) to "修复失败，请查看日志或手动处理"
+                        else -> "" to ""
                     }
 
                     Card(modifier = Modifier.fillMaxWidth()) {
                         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(24.dp)) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
-                                    imageVector = when (uiState) {
+                                    imageVector = when (currentState) {
                                         UiState.Success -> Icons.Default.CheckCircle
                                         UiState.Partial -> Icons.Default.Warning
                                         UiState.Failed -> Icons.Default.Warning
+                                        else -> Icons.Default.Warning
                                     },
                                     contentDescription = null,
-                                    tint = when (uiState) {
+                                    tint = when (currentState) {
                                         UiState.Success -> androidx.compose.material3.MaterialTheme.colorScheme.primary
                                         UiState.Partial -> androidx.compose.material3.MaterialTheme.colorScheme.tertiary
                                         UiState.Failed -> androidx.compose.material3.MaterialTheme.colorScheme.error
+                                        else -> androidx.compose.material3.MaterialTheme.colorScheme.error
                                     },
                                     modifier = Modifier.size(64.dp).padding(bottom = 16.dp)
                                 )
