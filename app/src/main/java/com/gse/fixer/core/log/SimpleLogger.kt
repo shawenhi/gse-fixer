@@ -11,10 +11,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.ConcurrentLinkedQueue
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Inject
+import org.koin.core.annotation.Single
 
-@Singleton
+@Single
 class SimpleLogger @Inject constructor(
     private val context: Context
 ) {
@@ -42,7 +42,7 @@ class SimpleLogger @Inject constructor(
         while (memoryLog.size > maxMemoryLines) memoryLog.poll()
         
         // 文件落盘 (异步)
-        withContext(Dispatchers.IO) {
+        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
             try {
                 FileWriter(logFile, true).use { it.write("$line\n") }
             } catch (e: Exception) { /* 忽略写入失败 */ }

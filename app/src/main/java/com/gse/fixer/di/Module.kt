@@ -7,6 +7,7 @@ import com.gse.fixer.core.enabler.ShizukuEnabler
 import com.gse.fixer.core.installer.ApkInstaller
 import com.gse.fixer.core.log.SimpleLogger
 import com.gse.fixer.core.verifier.ServiceVerifier
+import org.koin.android.ext.androidContext
 import org.koin.dsl.module
 
 val Module = module {

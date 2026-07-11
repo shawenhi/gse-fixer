@@ -19,7 +19,15 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.ListAlt
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,10 +38,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gse.fixer.core.detector.GoogleServiceDetector
+import com.gse.fixer.core.downloader.GmsDownloader
+import com.gse.fixer.core.enabler.ShizukuEnabler
+import com.gse.fixer.core.installer.ApkInstaller
 import com.gse.fixer.core.log.SimpleLogger
+import com.gse.fixer.core.verifier.ServiceVerifier
 import com.gse.fixer.di.Module
 import com.gse.fixer.model.PackageState
 import com.gse.fixer.model.Status
@@ -44,14 +58,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import org.koin.androidx.compose.get
 import org.koin.core.parameter.parameterOf
+import org.koin.core.qualifier.named
 
 @Composable
 fun MainScreen() {
-    val logger = remember { get<SimpleLogger>(parameterOf(Module)) }
-    val detector = remember { get<GoogleServiceDetector>(parameterOf(Module)) }
-    val enabler = remember { get<ShizukuEnabler>(parameterOf(Module)) }
-    val installer = remember { get<ApkInstaller>(parameterOf(Module)) }
-    val verifier = remember { get<ServiceVerifier>(parameterOf(Module)) }
+    val logger = remember { get<SimpleLogger>(parameterOf(Module))
+    val detector = remember { get<GoogleServiceDetector>(parameterOf(Module))
+    val enabler = remember { get<ShizukuEnabler>(parameterOf(Module))
+    val installer = remember { get<ApkInstaller>(parameterOf(Module))
+    val verifier = remember { get<ServiceVerifier>(parameterOf(Module))
     
     var states by remember { mutableStateOf<List<PackageState>>(emptyList()) }
     var uiState by remember { mutableStateOf<UiState>(UiState.Loading) }

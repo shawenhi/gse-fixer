@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +28,13 @@ import androidx.compose.ui.unit.sp
 import com.gse.fixer.model.PackageState
 import com.gse.fixer.model.Status
 import com.gse.fixer.R
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CloudSync
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.Web
+import androidx.compose.material.icons.filled.Android
 
 @Composable
 fun StatusCard(
@@ -45,7 +52,7 @@ fun StatusCard(
             contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
         ),
         shape = RoundedCornerShape(16.dp),
-        border = if (isProblematic) androidx.compose.ui.graphics.Outline.Border(2.dp, statusColor) else null
+        border = if (isProblematic) Outline.Border(2.dp, statusColor) else null
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -168,9 +175,9 @@ fun StatusCard(
 
 @Composable
 private fun getIconForPackage(packageName: String) = when (packageName) {
-    "com.google.android.gsf" -> androidx.compose.material.icons.Icons.Default.Settings
-    "com.google.android.gms" -> androidx.compose.material.icons.Icons.Default.CloudSync
-    "com.android.vending" -> androidx.compose.material.icons.Icons.Default.ShoppingBag
-    "com.android.chrome" -> androidx.compose.material.icons.Icons.Default.Web
-    else -> androidx.compose.material.icons.Icons.Default.Android
+    "com.google.android.gsf" -> Icons.Default.Settings
+    "com.google.android.gms" -> Icons.Default.CloudSync
+    "com.android.vending" -> Icons.Default.ShoppingBag
+    "com.android.chrome" -> Icons.Default.Web
+    else -> Icons.Default.Android
 }

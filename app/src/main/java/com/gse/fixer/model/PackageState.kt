@@ -6,7 +6,7 @@ data class PackageState(
     val packageName: String,
     val label: String,
     val status: Status,
-    val versionCode: Long = -1,
+    val versionCode: Long = -1L,
     val versionName: String = "",
     val installer: String = "",
     val isSystemApp: Boolean = false,
@@ -16,7 +16,7 @@ data class PackageState(
     val isStub: Boolean = false,
     val apkAssetName: String? = null,
     val downloadUrl: String? = null,
-    val minVersionCode: Long = 0,
+    val minVersionCode: Long = 0L,
     val isRequired: Boolean = true,
 ) {
     val isInstalled: Boolean get() = versionCode != -1
