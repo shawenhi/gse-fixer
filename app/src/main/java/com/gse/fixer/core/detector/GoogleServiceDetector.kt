@@ -33,18 +33,18 @@ class GoogleServiceDetector @Inject constructor(
         return try {
             val info = pm.getPackageInfo(meta.packageName, PackageManager.GET_DISABLED_COMPONENTS)
             val appInfo = info.applicationInfo
-            
+
             val versionCode = info.longVersionCode
             val versionName = info.versionName ?: ""
             val installer = pm.getInstallSourceInfo(meta.packageName)?.installingPackageName ?: "system"
             val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
-            
+
             var status = Status.OK
             var isHidden = false
             var isDisabled = false
             var isFrozen = false
             var isStub = false
-            
+
             // 1. 系统占位符判断：系统应用且版本过低
             if (isSystem && versionCode < meta.minVersion) {
                 status = Status.STUB
@@ -52,10 +52,7 @@ class GoogleServiceDetector @Inject constructor(
                 logger.w("Detector", "${meta.label} 疑似系统占位符: versionCode=$versionCode < ${meta.minVersion}")
             }
             // 2. 启用状态检查
-            else if (!pm.getApplicationEnabledSetting(meta.packageName).let { 
-                it == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT || 
-                it == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-            }) {
+            else {
                 val enabledSetting = pm.getApplicationEnabledSetting(meta.packageName)
                 when (enabledSetting) {
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER,
@@ -69,23 +66,19 @@ class GoogleServiceDetector @Inject constructor(
                             status = Status.HIDDEN
                             isHidden = true
                             logger.w("Detector", "${meta.label} 被隐藏")
+                        } else if (isLikelyFrozen(meta.packageName)) {
+                            status = Status.FROZEN
+                            isFrozen = true
+                            logger.w("Detector", "${meta.label} 疑似被冻结")
+                        } else if (!hasLauncherIcon(meta.packageName)) {
+                            status = Status.HIDDEN
+                            isHidden = true
+                            logger.w("Detector", "${meta.label} 无 Launcher 图标")
                         }
                     }
                 }
             }
-            // 3. 冻结检测：尝试启动主 Activity
-            else if (isLikelyFrozen(meta.packageName)) {
-                status = Status.FROZEN
-                isFrozen = true
-                logger.w("Detector", "${meta.label} 疑似被冻结")
-            }
-            // 4. 仅隐藏图标：有包但无 Launcher 图标
-            else if (!hasLauncherIcon(meta.packageName)) {
-                status = Status.HIDDEN
-                isHidden = true
-                logger.w("Detector", "${meta.label} 无 Launcher 图标")
-            }
-            
+
             PackageState(
                 packageName = meta.packageName,
                 label = meta.label,

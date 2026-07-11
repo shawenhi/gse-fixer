@@ -19,7 +19,7 @@ data class PackageState(
     val minVersionCode: Long = 0L,
     val isRequired: Boolean = true,
 ) {
-    val isInstalled: Boolean get() = versionCode != -1
+    val isInstalled: Boolean get() = versionCode != -1L
     val isProblematic: Boolean get() = status != Status.OK
     val needsInstall: Boolean get() = status == Status.MISSING || status == Status.STUB
     val needsEnable: Boolean get() = status in setOf(Status.DISABLED, Status.FROZEN, Status.HIDDEN)
@@ -48,9 +48,9 @@ object TargetPackages {
     const val CHROME = "com.android.chrome"
 
     val ALL_IN_ORDER = listOf(
-        PackageMeta(GSF, "Google 服务框架 (GSF)", "GoogleServicesFramework.apk", 
+        PackageMeta(GSF, "Google 服务框架 (GSF)", "GoogleServicesFramework.apk",
             minVersion = 200000000L, downloadUrl = null),
-        PackageMeta(GMS, "Google Play 服务 (GMS)", "base.apk", 
+        PackageMeta(GMS, "Google Play 服务 (GMS)", "base.apk",
             minVersion = 210000000L, downloadUrl = "https://github.com/madebychinese/gms-installer/releases/latest/download/base.apk"),
         PackageMeta(PLAY_STORE, "Google Play 商店", "Phonesky.apk",
             minVersion = 30000000L, downloadUrl = null),

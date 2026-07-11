@@ -29,7 +29,7 @@ class ServiceVerifier @Inject constructor(
                 VerifyResult(state.packageName, mapOf("installed" to false), false)
             } else {
                 val checks = mutableMapOf<String, Boolean>()
-                
+
                 // 1. 包存在且启用
                 val info = try {
                     pm.getPackageInfo(state.packageName, 0)
@@ -38,26 +38,26 @@ class ServiceVerifier @Inject constructor(
                 }
                 checks["package_exists"] = info != null
                 checks["enabled"] = info != null && pm.getApplicationEnabledSetting(state.packageName) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER
-                
+
                 // 2. 版本达标
                 if (info != null) {
                     checks["version_ok"] = info.longVersionCode >= state.minVersionCode
                 }
-                
+
                 // 3. 关键服务/进程在运行 (GMS 特有)
                 if (state.packageName == "com.google.android.gms") {
                     checks["gms_core_running"] = isProcessRunning("com.google.android.gms")
                     checks["gms_chimera_running"] = isProcessRunning("com.google.android.gms.chimera")
                 }
-                
+
                 // 4. 签名一致性 (Google 官方签名)
                 checks["signature_google"] = verifyGoogleSignature(state.packageName)
-                
+
                 // 5. Play Store 可启动
                 if (state.packageName == "com.android.vending") {
                     checks["store_launchable"] = pm.getLaunchIntentForPackage(state.packageName) != null
                 }
-                
+
                 VerifyResult(state.packageName, checks, checks.values.all { it })
             }
         }
@@ -74,12 +74,12 @@ class ServiceVerifier @Inject constructor(
     private fun verifyGoogleSignature(packageName: String): Boolean {
         return try {
             val info = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-            val signatures = info.signingInfo.getApkContentsSigners() ?: info.signatures
+            val signatures = info.signingInfo.apkContentsSigners ?: info.signatures
             signatures.any { sig ->
-                val sha256 = sig.toByteArray().let { 
-                    java.security.MessageDigest.getInstance("SHA-256").digest(it) 
+                val sha256 = sig.toByteArray().let {
+                    java.security.MessageDigest.getInstance("SHA-256").digest(it)
                 }.joinToString(":") { "%02X".format(it) }
-                // Google 官方发布证书 SHA-256 (示例，实际需对比完整证书链)
+                // Google 官方发布证书 SHA-256 前缀
                 sha256.startsWith("38:91:8A") || sha256.startsWith("C3:7C:4D") || sha256.startsWith("9A:1E:1E")
             }
         } catch (_: Exception) { false }

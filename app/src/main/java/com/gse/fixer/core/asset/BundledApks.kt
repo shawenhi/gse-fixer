@@ -23,10 +23,10 @@ class BundledApks @Inject constructor(
             logger.d("Asset", "APK 已存在: $dest (${dest.length()} bytes)")
             return@withContext dest
         }
-        
+
         val assetPath = baseDir + assetName
         logger.i("Asset", "释放 APK: $assetPath -> $dest")
-        
+
         try {
             context.assets.open(assetPath).use { input ->
                 dest.parentFile?.mkdirs()

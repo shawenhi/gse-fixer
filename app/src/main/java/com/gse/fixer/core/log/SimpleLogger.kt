@@ -3,8 +3,9 @@ package com.gse.fixer.core.log
 import android.content.Context
 import android.util.Log
 import com.tencent.mmkv.MMKV
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
@@ -23,7 +24,8 @@ class SimpleLogger @Inject constructor(
     private val maxMemoryLines = 500
     private val logFile = File(context.filesDir, "logs/gse_${SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())}.log")
     private val dateFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault())
-    
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     init {
         logFile.parentFile?.mkdirs()
     }
@@ -36,18 +38,18 @@ class SimpleLogger @Inject constructor(
     private fun log(level: String, tag: String, msg: String) {
         val timestamp = dateFormat.format(Date())
         val line = "[$timestamp] [$level/$tag] $msg"
-        
+
         // 内存环形缓冲
         memoryLog.add(line)
         while (memoryLog.size > maxMemoryLines) memoryLog.poll()
-        
+
         // 文件落盘 (异步)
-        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             try {
                 FileWriter(logFile, true).use { it.write("$line\n") }
             } catch (e: Exception) { /* 忽略写入失败 */ }
         }
-        
+
         // Android Logcat
         when (level) {
             "D" -> Log.d(tag, msg)

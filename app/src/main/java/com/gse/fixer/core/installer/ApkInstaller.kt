@@ -29,9 +29,9 @@ class ApkInstaller @Inject constructor(
         onProgress: (Float) -> Unit = {}
     ): Boolean = withContext(Dispatchers.IO) {
         if (!state.needsInstall) return@withContext true
-        
+
         logger.i("Installer", "开始安装: ${state.label} (${state.packageName})")
-        
+
         // 1. 获取 APK 文件
         val apkFile = when {
             state.apkAssetName != null -> {
@@ -43,17 +43,17 @@ class ApkInstaller @Inject constructor(
             }
             else -> null
         }
-        
+
         apkFile?.let { file ->
             logger.i("Installer", "APK 准备就绪: ${file.length()} bytes")
-            
+
             // 2. 尝试 Shizuku 静默安装
             if (shizukuEnabler.isShizukuAvailable()) {
                 val success = shizukuEnabler.installApk(file)
                 if (success) return@withContext true
                 logger.w("Installer", "Shizuku 安装失败，回退到系统安装器")
             }
-            
+
             // 3. 回退：FileProvider 启动系统安装页面
             installViaSystemInstaller(file)
         } ?: run {
