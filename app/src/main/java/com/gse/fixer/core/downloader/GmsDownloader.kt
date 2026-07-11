@@ -12,9 +12,7 @@ import okio.sink
 import java.io.File
 import java.util.concurrent.TimeUnit
 import org.koin.core.annotation.Inject
-import org.koin.core.annotation.Single
 
-@Single
 class GmsDownloader @Inject constructor(
     private val context: Context,
     private val logger: SimpleLogger

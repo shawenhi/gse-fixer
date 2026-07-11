@@ -41,13 +41,11 @@ class ShizukuEnabler @Inject constructor(
 
         val pkg = state.packageName
         val currentState = state.status
-        
+
         return@withContext when (currentState) {
             Status.DISABLED, Status.FROZEN -> {
                 logger.i("ShizukuEnabler", "尝试启用: $pkg")
                 try {
-                    val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
-                    appOps.setMode(android.app.AppOpsManager.OPSTR_RUN_IN_BACKGROUND, 0, pkg, android.app.AppOpsManager.MODE_ALLOWED)
                     ShizukuApi.setApplicationEnabledSetting(pkg, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, 0)
                     logger.i("ShizukuEnabler", "启用成功: $pkg")
                     true
